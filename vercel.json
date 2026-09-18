@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
-    { "source": "/((?!css/|js/|data/|media/).*)", "destination": "/index.html" }
+    { "source": "/((?!api(?:/|$)|css(?:/|$)|js(?:/|$)|data(?:/|$)).*)", "destination": "/index.html" }
   ]
 }

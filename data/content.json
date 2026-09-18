@@ -1,5 +1,7 @@
 {
   "site": "John Elmer",
+  "theme": "dark",
+  "brand": { "mode": "name", "logo": "", "links": "left" },
   "password": "change-me",
   "nav": [
     { "label": "Who we are", "href": "/about" },
