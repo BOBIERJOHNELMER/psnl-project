@@ -250,6 +250,9 @@ body.is-admin .hero { outline: 1px dashed #fff3; outline-offset: -8px; }
   border-radius: 999px; padding: 6px 12px; cursor: pointer;
 }
 .file-stage embed { width: 100%; height: 72vh; border: 0; background: #111; }
+#file-modal-body { overflow: auto; max-height: 72vh; }
+.pdf-pages { display: grid; gap: 12px; background: #111; }
+.pdf-pages canvas { width: 100%; height: auto; display: block; background: #fff; }
 .file-fallback { padding: 40px 16px; text-align: center; color: var(--muted); }
 .file-fallback a { color: #fff; text-decoration: underline; }
 .tpl-card { cursor: grab; border-color: #e3292e44; }

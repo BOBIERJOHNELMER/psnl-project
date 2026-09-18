@@ -66,6 +66,8 @@ export default async function handler(req, res) {
       allowOverwrite: true,
       addRandomSuffix: false,
       allowedContentTypes: types,
+      contentType,
+      contentDisposition: 'inline',
       maximumSizeInBytes: 150 * 1024 * 1024
     });
     return res.status(200).json({

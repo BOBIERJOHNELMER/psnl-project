@@ -280,6 +280,7 @@ async function uploadLiveFile(pathname, file, password) {
     method: 'PUT',
     body: file,
     headers: {
+      'Content-Type': file.type || 'application/octet-stream',
       'x-content-type': file.type || 'application/octet-stream'
     }
   });
@@ -816,13 +817,42 @@ async function loadFileBlob(item) {
     const local = await getMedia(item.fileId).catch(() => null);
     if (local) return local;
   }
-  if (item.fileUrl && /^https?:\/\//.test(item.fileUrl)) {
-    const r = await fetch(item.fileUrl);
-    if (!r.ok) return null;
-    const raw = await r.blob();
-    return new File([raw], item.fileName || 'file', { type: fileGuessType(item, raw) });
+  const src = item.fileUrl && /^https?:\/\//.test(item.fileUrl) ? item.fileUrl : '';
+  if (!src) return null;
+  const paths = [src];
+  if (/public\.blob\.vercel-storage\.com\/psnl\/file\//.test(src)) {
+    paths.unshift(`/api/file?src=${encodeURIComponent(src)}&name=${encodeURIComponent(item.fileName || 'file.pdf')}`);
+  }
+  for (const url of paths) {
+    try {
+      const r = await fetch(url, { cache: 'no-store' });
+      if (!r.ok) continue;
+      const raw = await r.blob();
+      return new File([raw], item.fileName || 'file', { type: fileGuessType(item, raw) });
+    } catch {}
   }
   return null;
+}
+
+async function renderPdfPages(container, file) {
+  const pdfjs = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+  const data = new Uint8Array(await file.arrayBuffer());
+  const pdf = await pdfjs.getDocument({ data }).promise;
+  const wrap = document.createElement('div');
+  wrap.className = 'pdf-pages';
+  const max = Math.min(pdf.numPages, 40);
+  for (let n = 1; n <= max; n++) {
+    const page = await pdf.getPage(n);
+    const viewport = page.getViewport({ scale: 1.35 });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    wrap.appendChild(canvas);
+  }
+  container.innerHTML = '';
+  container.appendChild(wrap);
 }
 
 async function fileBlobUrl(item) {
@@ -862,16 +892,24 @@ async function openFileModal(id) {
   const title = $('file-modal-title');
   if (!modal || !body) return;
   closeFileModal(true);
-  const url = URL.createObjectURL(file);
   title.textContent = item.title || item.fileName || 'File';
+  modal.hidden = false;
+  if (history.state?.fileModal !== true) history.pushState({ fileModal: true }, '', location.pathname + location.search);
+  if (kind === 'pdf') {
+    body.innerHTML = '<p class="file-fallback">Opening PDF…</p>';
+    try {
+      await renderPdfPages(body, file);
+    } catch {
+      body.innerHTML = `<div class="file-fallback"><p>This PDF cannot be previewed here.</p><button type="button" data-file-dl="${esc(item.id)}">Download ${esc(item.fileName || 'file')}</button></div>`;
+    }
+    return;
+  }
+  const url = URL.createObjectURL(file);
+  modal.dataset.url = url;
   if (kind === 'image') body.innerHTML = `<img alt="" src="${esc(url)}">`;
   else if (kind === 'video') body.innerHTML = `<video src="${esc(url)}" controls autoplay playsinline></video>`;
   else if (kind === 'audio') body.innerHTML = `<audio src="${esc(url)}" controls autoplay></audio>`;
-  else if (kind === 'pdf') body.innerHTML = `<iframe title="${esc(item.fileName || 'PDF')}" src="${esc(url)}"></iframe>`;
   else body.innerHTML = `<div class="file-fallback"><p>Preview is not available for this file type.</p><button type="button" data-file-dl="${esc(item.id)}">Download ${esc(item.fileName || 'file')}</button></div>`;
-  modal.dataset.url = url;
-  modal.hidden = false;
-  if (history.state?.fileModal !== true) history.pushState({ fileModal: true }, '', location.pathname + location.search);
 }
 
 async function downloadFileItem(id) {
@@ -1013,7 +1051,7 @@ load().then(async () => {
     $('reset-modal').hidden = false;
   }
   try {
-    const { initAdmin } =   await import('./admin.js?v=30');
+    const { initAdmin } =   await import('./admin.js?v=31');
     initAdmin();
   } catch (err) {
     console.error(err);
