@@ -9,10 +9,10 @@
   "hero": {
     "type": "image",
     "src": "",
-    "title": "John Elmer",
-    "sub": "",
-    "cta": "See my work",
-    "ctaHref": "/work"
+    "layers": [
+      { "id": "title", "kind": "title", "text": "John Elmer", "x": 10, "y": 36, "w": 80, "h": 18, "color": "#ffffff" },
+      { "id": "cta", "kind": "cta", "text": "See my work", "href": "/work", "x": 38, "y": 58, "w": 24, "h": 9, "color": "#ffffff" }
+    ]
   },
   "pages": {
     "home": { "items": [] },
