@@ -1,0 +1,35 @@
+{
+  "site": "John Elmer",
+  "password": "change-me",
+  "nav": [
+    { "label": "Who we are", "href": "/about" },
+    { "label": "Work with us", "href": "/work" },
+    { "label": "News", "href": "/news" }
+  ],
+  "hero": {
+    "type": "image",
+    "src": "",
+    "title": "John Elmer",
+    "sub": "",
+    "cta": "See my work",
+    "ctaHref": "/work"
+  },
+  "pages": {
+    "home": { "items": [] },
+    "about": {
+      "items": [
+        { "id": "a1", "type": "section", "title": "About", "body": "A short note about who you are and what you make." }
+      ]
+    },
+    "work": {
+      "items": [
+        { "id": "w1", "type": "section", "title": "Work", "body": "Add boxes on the home page that link here, or write about projects." }
+      ]
+    },
+    "news": {
+      "items": [
+        { "id": "n1", "type": "section", "title": "News", "body": "Updates, notes, and things in progress." }
+      ]
+    }
+  }
+}

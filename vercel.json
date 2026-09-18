@@ -1,0 +1,6 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/((?!css/|js/|data/|media/).*)", "destination": "/index.html" }
+  ]
+}

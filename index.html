@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <base href="/">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/" data-link></a>
+    <nav class="links" id="nav-links"></nav>
+    <button type="button" class="sign-in" id="sign-in">Sign in</button>
+  </header>
+
+  <section class="hero" id="hero" hidden></section>
+  <main id="app"></main>
+
+  <div class="modal" id="login-modal" hidden>
+    <form class="card" id="login-form">
+      <h2>Admin</h2>
+      <input type="password" id="login-pass" autocomplete="current-password" required>
+      <p class="err" id="login-err" hidden>Wrong password</p>
+      <div class="row">
+        <button type="submit">Enter</button>
+        <button type="button" id="login-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <aside class="admin-bar" id="admin-bar" hidden>
+    <button type="button" data-act="box">Add box</button>
+    <button type="button" data-act="text">Add text</button>
+    <button type="button" data-act="section">Add section</button>
+    <button type="button" data-act="hero">Hero</button>
+    <button type="button" data-act="save">Save</button>
+    <button type="button" data-act="export">Export JSON</button>
+    <button type="button" data-act="logout">Log out</button>
+    <span id="save-msg"></span>
+  </aside>
+
+  <div class="drawer" id="drawer" hidden></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
